@@ -25,7 +25,6 @@ import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.examples.helloworld.HelloReply;
 import io.grpc.examples.helloworld.HelloRequest;
 import io.grpc.gcp.csm.observability.CsmObservability;
-import io.grpc.xds.XdsChannelCredentials;
 import io.opentelemetry.exporter.prometheus.PrometheusHttpServer;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
@@ -128,10 +127,8 @@ public class CsmObservabilityClient {
     observability.registerGlobal();
 
     // Create a communication channel to the server, known as a Channel.
-    ManagedChannel channel =
-        Grpc.newChannelBuilder(
-                target, XdsChannelCredentials.create(InsecureChannelCredentials.create()))
-            .build();
+    ManagedChannel channel = Grpc.newChannelBuilder(target, InsecureChannelCredentials.create())
+        .build();
     CsmObservabilityClient client = new CsmObservabilityClient(channel);
 
     try {

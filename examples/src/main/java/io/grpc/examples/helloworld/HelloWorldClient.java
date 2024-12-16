@@ -43,16 +43,36 @@ public class HelloWorldClient {
   }
 
   /** Say hello to server. */
+  // Client-side logic for interacting with the gRPC service.
   public void greet(String name) {
+    // Log a message indicating the intention to greet a user.
     logger.info("Will try to greet " + name + " ...");
+
+    // Creating a request with the user's name.
     HelloRequest request = HelloRequest.newBuilder().setName(name).build();
     HelloReply response;
     try {
+      // Call the original method on the server.
       response = blockingStub.sayHello(request);
     } catch (StatusRuntimeException e) {
+      // Log a warning if the RPC fails.
       logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
       return;
     }
+
+    // Log the response from the original method.
+    logger.info("Greeting: " + response.getMessage());
+
+    try {
+      // Call the new method on the server.
+      response = blockingStub.sayHelloAgain(request);
+    } catch (StatusRuntimeException e) {
+      // Log a warning if the RPC fails.
+      logger.log(Level.WARNING, "RPC failed: {0}", e.getStatus());
+      return;
+    }
+
+    // Log the response from the new method.
     logger.info("Greeting: " + response.getMessage());
   }
 
@@ -63,7 +83,7 @@ public class HelloWorldClient {
   public static void main(String[] args) throws Exception {
     String user = "world";
     // Access a service running on the local machine on port 50051
-    String target = "localhost:50051";
+    String target = "172.30.11.209:50051";
     // Allow passing in the user and target strings as command line arguments
     if (args.length > 0) {
       if ("--help".equals(args[0])) {
